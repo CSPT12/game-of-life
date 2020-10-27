@@ -36,6 +36,7 @@ class Game extends React.Component {
         cells: [],
         isRunning: false,
         interval: 500,
+        generations: 0,
     }
 
     makeEmptyBoard() {
@@ -74,18 +75,15 @@ class Game extends React.Component {
     }
 
     handleClick = (event) => {
-
         const elemOffset = this.getElementOffset();
         const offsetX = event.clientX - elemOffset.x;
-        const offsetY = event.clientY - elemOffset.y;
-        
+        const offsetY = event.clientY - elemOffset.y;       
         const x = Math.floor(offsetX / CELL_SIZE);
         const y = Math.floor(offsetY / CELL_SIZE);
-
+        
         if (x >= 0 && x <= this.cols && y >= 0 && y <= this.rows) {
             this.board[y][x] = !this.board[y][x];
         }
-
         this.setState({ cells: this.makeCells() });
     }
 
@@ -94,8 +92,9 @@ class Game extends React.Component {
         this.runIteration();
     }
 
+
     stopGame = () => {
-        this.setState({ isRunning: false });
+        this.setState({ isRunning: false, generations: 0 });
         if (this.timeoutHandler) {
             window.clearTimeout(this.timeoutHandler);
             this.timeoutHandler = null;
@@ -104,7 +103,7 @@ class Game extends React.Component {
 
     runIteration() {
         let newBoard = this.makeEmptyBoard();
-
+        let generations = this.state.generations += 1;
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
                 let neighbors = this.calculateNeighbors(this.board, x, y);
@@ -207,6 +206,7 @@ class Game extends React.Component {
                         }
                         <button className="button" onClick={this.handleRandom}>Random</button>
                         <button className="button" onClick={this.handleClear}>Clear</button>
+                        <p>Generation: {this.state.generations}</p>
                     </div>
                 </div>
             </div>
